@@ -1,22 +1,29 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
 
-Route::get('/', function () {
-    return response()->file(
-        public_path('yxr-home/en.ks-yxr.com/index.html')
-    );
-});
+Route::get('/{path?}', function ($path = null) {
+    $base = public_path('yxr-home/en.ks-yxr.com');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    $path = $path ?: 'index.html';
+    $path = urldecode($path);
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+    if (str_contains($path, '..')) {
+        abort(404);
+    }
 
-require __DIR__.'/auth.php';
+    $file = $base . '/' . $path;
+
+    if (is_dir($file)) {
+        $file = rtrim($file, '/') . '/index.html';
+    } elseif (!File::exists($file) && !pathinfo($file, PATHINFO_EXTENSION)) {
+        $file = rtrim($file, '/') . '/index.html';
+    }
+
+    if (!File::exists($file)) {
+        abort(404);
+    }
+
+    return response()->file($file);
+})->where('path', '.*');
