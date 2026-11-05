@@ -59,3 +59,7 @@ pnpm-debug.log
 !/postgres/init-db.sql
 /containerized/*
 .vagrant/
+
+# Deployment-only secrets and migration snapshots
+/cloudflared/credentials.json
+/database/backups/

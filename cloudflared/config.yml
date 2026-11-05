@@ -1,0 +1,13 @@
+tunnel: 4e272d9f-69b1-4e0b-b329-911966545599
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  - hostname: migration-test.yxr-cn.com
+    service: http://nginx:80
+  - hostname: yxr-cn.com
+    service: http://nginx:80
+  - hostname: www.yxr-cn.com
+    service: http://nginx:80
+  - hostname: en.yxr-cn.com
+    service: http://nginx:80
+  - service: http_status:404
